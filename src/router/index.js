@@ -1,29 +1,60 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Vue from "vue";
+import VueRouter from "vue-router";
 
-Vue.use(VueRouter)
+Vue.use(VueRouter);
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
-    component: Home
+    path: "*",
+    redirect: "/login",
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  }
-]
+    path: "/",
+    redirect: "/login",
+  },
+  {
+    path: "/login",
+    name: "Login",
+    component: () => import("../views/Login.vue"),
+  },
+  {
+    path: "/painel",
+    name: "Panel",
+    component: () => import("../views/Panel.vue"),
+    children: [
+      {
+        path: "/painel/cadastro-aluno",
+        name: "RegistrationStudent",
+        component: () => import("../components/forms/Student"),
+      },
+      {
+        path: "/painel/cadastro-pessoa",
+        name: "RegistrationPerson",
+        component: () => import("../components/forms/Person"),
+      },
+      {
+        path: "/painel/mensalidades",
+        name: "Payments",
+        component: () => import("../components/Payments"),
+      },
+      {
+        path: "/painel/historico",
+        name: "History",
+        component: () => import("../components/History"),
+      },
+      {
+        path: "/painel/alunos",
+        name: "ListStudents",
+        component: () => import("../components/lists/Students"),
+      },
+    ],
+  },
+];
 
 const router = new VueRouter({
-  mode: 'history',
+  mode: "history",
   base: process.env.BASE_URL,
-  routes
-})
+  routes,
+});
 
-export default router
+export default router;
