@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-list-item class="orange">
+    <v-list-item class="indigo" dark>
       <v-list-item-content>
         <v-list-item-title class="title">
           Unasp
@@ -15,7 +15,7 @@
 
     <v-list dense nav>
       <v-list-item
-        v-for="item in items"
+        v-for="item in listItems"
         :key="item.title"
         link
         :to="{ name: item.route }"
@@ -28,11 +28,21 @@
           <v-list-item-title>{{ item.title }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
+
+      <v-list-item @click="logout">
+        <v-list-item-icon>
+          <v-icon>mdi-logout</v-icon>
+        </v-list-item-icon>
+        <v-list-item-content>
+          <v-list-item-title>Sair</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
     </v-list>
   </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Sidebar",
   data() {
@@ -42,26 +52,50 @@ export default {
           title: "Alunos",
           icon: "mdi-view-dashboard",
           route: "ListStudents",
+          acl: ["admin"],
         },
         {
           title: "Cadastro Aluno",
           icon: "mdi-view-dashboard",
           route: "RegistrationStudent",
+          acl: ["admin"],
         },
         {
           title: "Cadastro Pessoa",
           icon: "mdi-view-dashboard",
           route: "RegistrationPerson",
+          acl: ["admin"],
         },
         {
           title: "Mensalidades",
           icon: "mdi-view-dashboard",
           route: "Payments",
+          acl: ["usuario", "admin"],
         },
-        { title: "Histórico", icon: "mdi-view-dashboard", route: "History" },
+        {
+          title: "Histórico",
+          icon: "mdi-view-dashboard",
+          route: "History",
+          acl: ["usuario", "admin"],
+        },
       ],
       right: null,
     };
+  },
+  computed: {
+    ...mapGetters("User", ["userStore"]),
+    listItems() {
+      return this.items.filter((item) =>
+        item.acl.includes(this.userStore.nivelAcesso)
+      );
+    },
+  },
+  methods: {
+    ...mapActions("User", ["setUserStore"]),
+    logout() {
+      this.setUserStore({});
+      this.$router.push({ name: "Login" });
+    },
   },
 };
 </script>

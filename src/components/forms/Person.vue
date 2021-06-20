@@ -1,5 +1,5 @@
 <template>
-  <ModelForm title="Cadastro de Pessoa">
+  <ModelForm title="Cadastro de Pessoa" @submit="handleSubmit">
     <validation-provider v-slot="{ errors }" name="Nome" rules="required">
       <v-text-field
         v-model="form.nome"
@@ -87,6 +87,9 @@ export default {
       form: {},
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
     };
+  },
+  methods: {
+    handleSubmit() {},
   },
 };
 </script>

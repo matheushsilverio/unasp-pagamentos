@@ -1,69 +1,91 @@
 <template>
   <ModelList title="Mensalidades">
     <v-data-table
+      :loading="loading"
       :headers="headers"
       :items="[...payments, ...payments, ...payments, ...payments]"
       :items-per-page="5"
       class="elevation-1"
     >
       <template v-slot:item.button="{ item }">
-        <v-btn color="success">
-          Pagar
-        </v-btn>
+        <div v-if="!item.status">
+          <v-btn color="success" @click="openModalPagar(item)">
+            Pagar
+          </v-btn>
+          <v-btn class="ml-3" color="indigo" dark>
+            Renegociar
+          </v-btn>
+        </div>
+        <v-chip v-else color="green lighten-5" label text-color="green">
+          Pago
+        </v-chip>
       </template>
     </v-data-table>
+    <ModalPagar
+      :active="isActiveModalPagar"
+      :fatura="faturaSelected"
+      @close="closeModalPagar"
+    ></ModalPagar>
   </ModelList>
 </template>
 
 <script>
+import { FaturaService } from "@/services/api";
 import ModelList from "./ModelList";
+import { mapGetters } from "vuex";
+import ModalPagar from "./modals/Pagar.vue";
 
 export default {
   name: "ListPayments",
   components: {
     ModelList,
+    ModalPagar,
   },
   data() {
     return {
+      loading: false,
       headers: [
-        { text: "Emissao", value: "emissao" },
+        { text: "ID", value: "id" },
+        { text: "Emissao", value: "dataEmissao" },
         { text: "Valor", value: "valor" },
-        { text: "Vencimento", value: "vencimento" },
+        { text: "parcelas", value: "parcelas" },
         { text: "Acoes", value: "button" },
       ],
-      payments: [
-        {
-          emissao: "20/04/2021",
-          valor: "R$ 500,00",
-          vencimento: "22/04/2021",
-          button: true,
-        },
-        {
-          emissao: "20/04/2021",
-          valor: "R$ 500,00",
-          vencimento: "22/04/2021",
-          button: true,
-        },
-        {
-          emissao: "20/04/2021",
-          valor: "R$ 500,00",
-          vencimento: "22/04/2021",
-          button: true,
-        },
-        {
-          emissao: "20/04/2021",
-          valor: "R$ 500,00",
-          vencimento: "22/04/2021",
-          button: true,
-        },
-        {
-          emissao: "20/04/2021",
-          valor: "R$ 500,00",
-          vencimento: "22/04/2021",
-          button: true,
-        },
-      ],
+      payments: [],
+      isActiveModalPagar: false,
+      faturaSelected: {},
     };
+  },
+  computed: {
+    ...mapGetters("User", ["userStore"]),
+  },
+  methods: {
+    getFaturas() {
+      this.loading = true;
+      let route = "";
+      if ("id" in this.userStore.aluno) {
+        route = `aluno/${this.userStore.aluno.id}`;
+      }
+
+      FaturaService.getDynamic(route).then((response) => {
+        this.payments = response.data.map((p) => {
+          if (p.dividas.length == p.parcelas) p.status = true;
+          else p.status = false;
+          return p;
+        });
+        this.loading = false;
+      });
+    },
+    openModalPagar(fatura) {
+      this.faturaSelected = { ...fatura };
+      this.isActiveModalPagar = true;
+    },
+    closeModalPagar() {
+      this.isActiveModalPagar = false;
+    },
+  },
+  created() {
+    this.getFaturas();
   },
 };
 </script>

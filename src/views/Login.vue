@@ -4,10 +4,15 @@
       <div id="login">
         <div class="module-login">
           <h2>Login</h2>
-          <v-text-field label="Email" placeholder="Email"></v-text-field>
+          <v-text-field
+            label="Email"
+            v-model="email"
+            placeholder="Email"
+          ></v-text-field>
           <v-text-field
             label="Senha"
             type="password"
+            v-model="senha"
             placeholder="Senha"
           ></v-text-field>
           <div>
@@ -21,11 +26,28 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import UserService from "@/services/userService";
+
 export default {
   name: "Login",
+  data() {
+    return {
+      email: "",
+      senha: "",
+    };
+  },
   methods: {
+    ...mapActions("User", ["setUserStore"]),
     submit() {
-      this.$router.push({ name: "Panel" });
+      UserService.login({ email: this.email, senha: this.senha })
+        .then((response) => {
+          this.setUserStore(response);
+          this.$router.push({ name: "Panel" });
+        })
+        .catch((err) => {
+          alert("Nao foi possivel realizar o login ");
+        });
     },
   },
 };
