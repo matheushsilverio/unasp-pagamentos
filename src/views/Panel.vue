@@ -1,6 +1,6 @@
 <template>
   <v-app id="inspire">
-    <v-navigation-drawer v-model="drawer" app color="blue-grey lighten-5">
+    <v-navigation-drawer v-model="drawer" app>
       <Sidebar></Sidebar>
     </v-navigation-drawer>
 
@@ -10,7 +10,7 @@
       <v-toolbar-title>Área</v-toolbar-title>
     </v-app-bar>
 
-    <v-main>
+    <v-main class="blue-grey lighten-5">
       <v-container>
         <router-view></router-view>
       </v-container>

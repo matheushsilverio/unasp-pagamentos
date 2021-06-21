@@ -12,7 +12,12 @@
           <v-btn color="success" @click="openModalPagar(item)">
             Pagar
           </v-btn>
-          <v-btn class="ml-3" color="indigo" dark>
+          <v-btn
+            class="ml-3"
+            color="indigo"
+            dark
+            @click="openModalRenegociar(item)"
+          >
             Renegociar
           </v-btn>
         </div>
@@ -25,7 +30,14 @@
       :active="isActiveModalPagar"
       :fatura="faturaSelected"
       @close="closeModalPagar"
+      @reload="getFaturas"
     ></ModalPagar>
+    <ModalRenegociar
+      :active="isActiveModalRenegociar"
+      :fatura="faturaSelected"
+      @close="closeModalRenegociar"
+      @reload="getFaturas"
+    ></ModalRenegociar>
   </ModelList>
 </template>
 
@@ -34,12 +46,14 @@ import { FaturaService } from "@/services/api";
 import ModelList from "./ModelList";
 import { mapGetters } from "vuex";
 import ModalPagar from "./modals/Pagar.vue";
+import ModalRenegociar from "./modals/Renegociar.vue";
 
 export default {
   name: "ListPayments",
   components: {
     ModelList,
     ModalPagar,
+    ModalRenegociar,
   },
   data() {
     return {
@@ -53,6 +67,7 @@ export default {
       ],
       payments: [],
       isActiveModalPagar: false,
+      isActiveModalRenegociar: false,
       faturaSelected: {},
     };
   },
@@ -82,6 +97,13 @@ export default {
     },
     closeModalPagar() {
       this.isActiveModalPagar = false;
+    },
+    openModalRenegociar(fatura) {
+      this.faturaSelected = { ...fatura };
+      this.isActiveModalRenegociar = true;
+    },
+    closeModalRenegociar() {
+      this.isActiveModalRenegociar = false;
     },
   },
   created() {

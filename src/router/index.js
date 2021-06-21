@@ -47,6 +47,11 @@ const routes = [
         name: "ListStudents",
         component: () => import("../components/lists/Students"),
       },
+      {
+        path: "/painel/cursos",
+        name: "ListCourses",
+        component: () => import("../components/Courses"),
+      },
     ],
   },
 ];

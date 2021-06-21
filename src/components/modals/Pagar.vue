@@ -161,6 +161,7 @@ export default {
       }).then(() => {
         this.loadingPay = false;
         this.getDividas();
+        this.$emit("reload");
       });
     },
   },

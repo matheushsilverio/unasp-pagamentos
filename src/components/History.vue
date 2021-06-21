@@ -17,6 +17,7 @@
 
 <script>
 import ModelList from "./ModelList";
+import { PagamentosService } from "@/services/api";
 
 export default {
   name: "ListHistory",
@@ -64,6 +65,9 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    getPagamentos() {},
   },
 };
 </script>
